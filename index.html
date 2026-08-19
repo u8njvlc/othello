@@ -766,6 +766,111 @@ function showF1Sequence(){
 }
 
 
+
+let secondE3Index = 0;
+
+const secondE3Sequence = [
+  { label: "自分 E3（風車）", side: "white" },
+  { label: "相手 C2（風車）", side: "black" },
+  { label: "自分 D6", side: "white" },
+  { label: "相手 F3", side: "black" },
+  { label: "自分 B3", side: "white" },
+  { label: "相手 A4", side: "black" },
+  { label: "自分 C1", side: "white" },
+  { label: "相手 B5", side: "black" },
+  { label: "自分 C5（耐久）", side: "white" },
+  { label: "相手 E5", side: "black" },
+  { label: "自分 F6", side: "white" },
+  { label: "相手 F5", side: "black" },
+  { label: "自分 F4", side: "white" },
+  { label: "相手 D1", side: "black" },
+  { label: "自分 E1", side: "white" },
+  { label: "自分 E6", side: "white" },
+  { label: "自分 F2", side: "white" },
+  { label: "自分 A6", side: "white" },
+  { label: "相手 C6", side: "black" },
+  { label: "自分 B6", side: "white" },
+  { label: "相手 A5", side: "black" },
+  { label: "自分 A3", side: "white" },
+  { label: "自分 E2", side: "white" },
+  { label: "相手 E4", side: "black" },
+  { label: "自分 B1", side: "white" }
+];
+
+function startSecondE3Sequence(){
+  secondE3Index = 1;
+  showSecondE3Sequence();
+}
+
+function showSecondE3Sequence(){
+  screen = "seconde3sequence";
+  b.innerHTML = "";
+  if(secondE3Index >= secondE3Sequence.length){
+    screen = "seconde3done";
+    t.textContent = "手順終了";
+    b.innerHTML = '<p class="finish">自分 B1 まで完了</p>';
+    return;
+  }
+  // 自分F2の後は 自分A6 / 自分C6 に分岐
+  if(secondE3Index === 17){
+    showSecondF2Choice();
+    return;
+  }
+  const move = secondE3Sequence[secondE3Index];
+  t.textContent = "次の手";
+  add(move.label, move.side, () => {
+    secondE3Index++;
+    showSecondE3Sequence();
+  });
+}
+
+function showSecondF2Choice(){
+  screen = "secondf2choice";
+  t.textContent = "自分の手";
+  b.innerHTML = "";
+  add("自分 A6（相手2手+1コンボ）", "white", () => {
+    secondE3Index = 18;
+    showSecondE3Sequence();
+  });
+  add("自分 C6（相手2手）", "white", startSecondF2C6Sequence);
+}
+
+const secondF2C6Sequence = [
+  { label: "自分 C6", side: "white" },
+  { label: "自分 A6", side: "white" },
+  { label: "自分 A2", side: "white" },
+  { label: "相手 A3", side: "black" },
+  { label: "自分 A5", side: "white" },
+  { label: "自分 E2", side: "white" },
+  { label: "相手 E4", side: "black" },
+  { label: "自分 B1", side: "white" },
+  { label: "自分 B2（コンボ強い駒）", side: "white" },
+  { label: "自分 B4", side: "white" }
+];
+let secondF2C6Index = 0;
+
+function startSecondF2C6Sequence(){
+  secondF2C6Index = 1;
+  showSecondF2C6Sequence();
+}
+
+function showSecondF2C6Sequence(){
+  screen = "secondf2c6sequence";
+  b.innerHTML = "";
+  if(secondF2C6Index >= secondF2C6Sequence.length){
+    screen = "secondf2c6done";
+    t.textContent = "手順終了";
+    b.innerHTML = '<p class="finish">自分 B4 まで完了</p>';
+    return;
+  }
+  const move = secondF2C6Sequence[secondF2C6Index];
+  t.textContent = "次の手";
+  add(move.label, move.side, () => {
+    secondF2C6Index++;
+    showSecondF2C6Sequence();
+  });
+}
+
 let secondC5Index = 0;
 
 const secondC5Sequence = [
@@ -863,7 +968,7 @@ function secondD5(){
   screen = "secondd5";
   t.textContent = "自分の手";
   b.innerHTML = "";
-  add("自分 E3（風車）", "white", () => placeholderSecond("自分 E3（風車）"));
+  add("自分 E3（風車）", "white", startSecondE3Sequence);
   add("自分 E5（X打ち）", "white", () => placeholderSecond("自分 E5（X打ち）"));
   add("自分 C5（並行打ちD5コンボ弱い場合）", "white", startSecondC5Sequence);
 }
@@ -896,6 +1001,45 @@ function back(){
 
   if(screen === "placeholdersecond"){
     secondD5();
+    return;
+  }
+
+
+  if(screen === "seconde3sequence"){
+    if(secondE3Index <= 1){
+      secondD5();
+    }else{
+      secondE3Index--;
+      showSecondE3Sequence();
+    }
+    return;
+  }
+
+  if(screen === "seconde3done"){
+    secondE3Index = secondE3Sequence.length - 1;
+    showSecondE3Sequence();
+    return;
+  }
+
+  if(screen === "secondf2choice"){
+    secondE3Index = 16;
+    showSecondE3Sequence();
+    return;
+  }
+
+  if(screen === "secondf2c6sequence"){
+    if(secondF2C6Index <= 1){
+      showSecondF2Choice();
+    }else{
+      secondF2C6Index--;
+      showSecondF2C6Sequence();
+    }
+    return;
+  }
+
+  if(screen === "secondf2c6done"){
+    secondF2C6Index = secondF2C6Sequence.length - 1;
+    showSecondF2C6Sequence();
     return;
   }
 
