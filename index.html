@@ -26,7 +26,7 @@
   <p>登録した手順をボタンで確認</p>
   <div id="t"></div>
   <div id="b"></div>
-  <button class="nav" onclick="back()">← 一つ前に戻る</button>
+  <button class="nav" onclick="goBack()">← 一つ前に戻る</button>
   <button class="home" onclick="home()">最初に戻る</button>
 </main>
 
@@ -100,7 +100,7 @@ const e3D2RabbitSequence = [
   { label: "相手 D6", side: "white" },
   { label: "自分 E4", side: "black" },
   { label: "相手 F5", side: "white" },
-  { label: "自分 C2", side: "black" },
+  { label: "自分 C2（優先）", side: "black" },
   { label: "相手 B1", side: "white" },
   { label: "自分 E2", side: "black" },
   { label: "相手 B3", side: "white" },
@@ -287,7 +287,23 @@ function startE3(){
     showSequenceStep();
   });
   add("自分 F2（C打ち）", "black", startE3F2Sequence);
-  add("自分 D2（うさぎ定石）", "black", startE3D2RabbitSequence);
+  add("自分 D2（うさぎ定石）", "black", showRabbitD2Choice);
+}
+
+function showRabbitD2Choice(){
+  screen = "rabbitd2choice";
+  t.textContent = "相手の手";
+  b.innerHTML = "";
+  add("相手 C1", "white", startE3D2RabbitSequence);
+  add("相手 C5", "white", showRabbitD2C5Choice);
+}
+
+function showRabbitD2C5Choice(){
+  screen = "rabbitd2c5choice";
+  t.textContent = "自分の手";
+  b.innerHTML = "";
+  add("自分 F3", "black", startRabbitD2C5Sequence);
+  add("自分 B3", "black", startRabbitD2C5B3Sequence);
 }
 
 function startE3D2RabbitSequence(){
@@ -298,6 +314,10 @@ function startE3D2RabbitSequence(){
 function showE3D2RabbitSequence(){
   screen = "e3d2rabbitsequence";
   b.innerHTML = "";
+  if(e3D2RabbitIndex === 6){
+    showRabbitF5Choice();
+    return;
+  }
   if(e3D2RabbitIndex === 7){
     showRabbitC2Choice();
     return;
@@ -316,6 +336,138 @@ function showE3D2RabbitSequence(){
     e3D2RabbitIndex++;
     showE3D2RabbitSequence();
   });
+}
+
+
+function showRabbitF5Choice(){
+  screen = "rabbitf5choice";
+  t.textContent = "自分の手";
+  b.innerHTML = "";
+  add("自分 C2（優先）", "black", () => { e3D2RabbitIndex = 7; showE3D2RabbitSequence(); });
+  add("自分 E2（攻めのストナー）", "black", startRabbitF5E2Sequence);
+}
+
+const rabbitF5E2Sequence = [
+  { label: "自分 E2（攻めのストナー）", side: "black" },
+  { label: "相手 C5", side: "white" },
+  { label: "自分 D1", side: "black" },
+  { label: "相手 F1", side: "white" },
+  { label: "自分 E1", side: "black" },
+  { label: "相手 F2", side: "white" },
+  { label: "自分 F4", side: "black" },
+  { label: "相手 C2", side: "white" },
+  { label: "自分 F6", side: "black" },
+  { label: "自分 E5", side: "black" },
+  { label: "相手 E6", side: "white" },
+  { label: "自分 C6", side: "black" },
+  { label: "自分 B2", side: "black" },
+  { label: "相手 B3", side: "white" },
+  { label: "自分 B6", side: "black" },
+  { label: "相手 C1", side: "white" },
+  { label: "自分 B4", side: "black" },
+  { label: "相手 B6", side: "white" },
+  { label: "自分 B2", side: "black" },
+  { label: "相手 A1", side: "white" },
+  { label: "自分 B1", side: "black" }
+];
+let rabbitF5E2Index = 0;
+function startRabbitF5E2Sequence(){ rabbitF5E2Index = 1; showRabbitF5E2Sequence(); }
+function showRabbitF5E2Sequence(){
+  screen = "rabbitf5e2sequence"; b.innerHTML = "";
+  if(rabbitF5E2Index >= rabbitF5E2Sequence.length){ screen="rabbitf5e2done"; t.textContent="手順終了"; b.innerHTML='<p class="finish">自分 B1 まで完了</p>'; return; }
+  const move=rabbitF5E2Sequence[rabbitF5E2Index]; t.textContent="次の手"; add(move.label,move.side,()=>{rabbitF5E2Index++;showRabbitF5E2Sequence();});
+}
+
+const rabbitD2C5Sequence = [
+  { label: "相手 C5", side: "white" },
+  { label: "自分 F3", side: "black" },
+  { label: "相手 D6", side: "white" },
+  { label: "自分 B3", side: "black" },
+  { label: "相手 D1", side: "white" },
+  { label: "自分 C6", side: "black" },
+  { label: "相手 B5", side: "white" },
+  { label: "自分 E4", side: "black" },
+  { label: "相手 C2", side: "white" },
+  { label: "自分 B4", side: "black" },
+  { label: "相手 A4", side: "white" },
+  { label: "自分 A3", side: "black" },
+  { label: "相手 F4", side: "white" },
+  { label: "自分 E5", side: "black" },
+  { label: "相手 F1", side: "white" },
+  { label: "自分 F5", side: "black" },
+  { label: "相手 F6", side: "white" },
+  { label: "自分 E6", side: "black" },
+  { label: "相手 B2", side: "white" },
+  { label: "自分 A6", side: "black" },
+  { label: "相手 A2", side: "white" },
+  { label: "自分 B5", side: "black" },
+  { label: "相手 A5", side: "white" },
+  { label: "自分 A1", side: "black" },
+  { label: "相手 E2", side: "white" },
+  { label: "自分 B1", side: "black" },
+  { label: "相手 C1", side: "white" },
+  { label: "自分 E1", side: "black" },
+  { label: "相手 F1", side: "white" }
+];
+let rabbitD2C5Index = 0;
+function startRabbitD2C5Sequence(){ rabbitD2C5Index = 2; showRabbitD2C5Sequence(); }
+function showRabbitD2C5Sequence(){
+  screen = "rabbitd2c5sequence";
+  b.innerHTML = "";
+  if(rabbitD2C5Index >= rabbitD2C5Sequence.length){
+    screen = "rabbitd2c5done";
+    t.textContent = "手順終了";
+    b.innerHTML = '<p class="finish">相手 F1 まで完了</p>';
+    return;
+  }
+  const move = rabbitD2C5Sequence[rabbitD2C5Index];
+  t.textContent = "次の手";
+  add(move.label, move.side, () => { rabbitD2C5Index++; showRabbitD2C5Sequence(); });
+}
+
+const rabbitD2C5B3Sequence = [
+  { label: "自分 B3", side: "black" },
+  { label: "相手 B4（オセロの定石）", side: "white" },
+  { label: "自分 C6（オセロの定石）", side: "black" },
+  { label: "相手 D6（オセロの定石）", side: "white" },
+  { label: "自分 E6（オセロの定石）", side: "black" },
+  { label: "相手 C2（オセロの定石）", side: "white" },
+  { label: "自分 C1（オセロの定石）", side: "black" },
+  { label: "相手 A3（オセロの定石）", side: "white" },
+  { label: "自分 E4（オセロの定石）", side: "black" },
+  { label: "相手 E4（オセロの定石）", side: "white" },
+  { label: "自分 A4（オセロの定石）", side: "black" },
+  { label: "相手 A5（オセロの定石）", side: "white" },
+  { label: "自分 B5（オセロの定石）", side: "black" },
+  { label: "相手 E1（オセロの定石）", side: "white" },
+  { label: "自分 F3（オセロの定石）", side: "black" },
+  { label: "相手 F1（オセロの定石）", side: "white" },
+  { label: "自分 F2（オセロの定石）", side: "black" },
+  { label: "相手 F1（オセロの定石）", side: "white" },
+  { label: "自分 F6（オセロの定石）", side: "black" },
+  { label: "相手 F5（オセロの定石）", side: "white" },
+  { label: "自分 A6（オセロの定石）", side: "black" },
+  { label: "相手 D1（オセロの定石）", side: "white" },
+  { label: "自分 B6（オセロの定石）", side: "black" },
+  { label: "相手 B1（オセロの定石）", side: "white" },
+  { label: "自分 A2（オセロの定石）", side: "black" },
+  { label: "相手 E2（オセロの定石）", side: "white" },
+  { label: "自分 B2（オセロの定石）", side: "black" },
+  { label: "相手 A1（オセロの定石）", side: "white" }];
+let rabbitD2C5B3Index = 0;
+function startRabbitD2C5B3Sequence(){ rabbitD2C5B3Index = 1; showRabbitD2C5B3Sequence(); }
+function showRabbitD2C5B3Sequence(){
+  screen = "rabbitd2c5b3sequence";
+  b.innerHTML = "";
+  if(rabbitD2C5B3Index >= rabbitD2C5B3Sequence.length){
+    screen = "rabbitd2c5b3done";
+    t.textContent = "手順終了";
+    b.innerHTML = '<p class="finish">相手 A1 まで完了</p>';
+    return;
+  }
+  const move = rabbitD2C5B3Sequence[rabbitD2C5B3Index];
+  t.textContent = "次の手";
+  add(move.label, move.side, () => { rabbitD2C5B3Index++; showRabbitD2C5B3Sequence(); });
 }
 
 function showRabbitC2Choice(){
@@ -489,7 +641,40 @@ function showB3Choice(){
     showE3F2Sequence();
   });
   add("相手 A2", "white", startB3A2Sequence);
+  add("相手 B4", "white", startB3B4Sequence);
 }
+
+
+const b3B4Sequence = [
+  { label: "相手 B4", side: "white" },
+  { label: "自分 C5（ちょい弱）", side: "black" },
+  { label: "相手 E4", side: "white" },
+  { label: "自分 F5", side: "black" },
+  { label: "相手 C6", side: "white" },
+  { label: "自分 A4", side: "black" },
+  { label: "相手 C2", side: "white" },
+  { label: "自分 D2", side: "black" },
+  { label: "相手 D1", side: "white" },
+  { label: "自分 E5", side: "black" },
+  { label: "相手 A3", side: "white" },
+  { label: "自分 B2", side: "black" },
+  { label: "相手 A5", side: "white" },
+  { label: "自分 C1（B1はダメ多分E2でホワイトライン出来るから）", side: "black" },
+  { label: "相手 E1", side: "white" },
+  { label: "自分 F1", side: "black" },
+  { label: "相手 F6", side: "white" },
+  { label: "自分 E2", side: "black" },
+  { label: "相手 F4", side: "white" },
+  { label: "自分 E6", side: "black" },
+  { label: "相手 F3", side: "white" },
+  { label: "自分 B5", side: "black" },
+  { label: "相手 A1", side: "white" },
+  { label: "自分 B1", side: "black" },
+  { label: "相手 B6", side: "white" }
+];
+let b3B4Index=0;
+function startB3B4Sequence(){ b3B4Index=1; showB3B4Sequence(); }
+function showB3B4Sequence(){ screen="b3b4sequence"; b.innerHTML=""; if(b3B4Index>=b3B4Sequence.length){screen="b3b4done";t.textContent="手順終了";b.innerHTML='<p class="finish">相手 B6 まで完了</p>';return;} const move=b3B4Sequence[b3B4Index];t.textContent="次の手";add(move.label,move.side,()=>{b3B4Index++;showB3B4Sequence();});}
 
 function startB3A2Sequence(){
   b3A2Index = 1;
@@ -811,6 +996,11 @@ function showSecondE3Sequence(){
     b.innerHTML = '<p class="finish">自分 B1 まで完了</p>';
     return;
   }
+  // 自分B3の後は 相手A4 / 相手C5 に分岐
+  if(secondE3Index === 5){
+    showSecondB3Choice();
+    return;
+  }
   // 自分F2の後は 自分A6 / 自分C6 に分岐
   if(secondE3Index === 17){
     showSecondF2Choice();
@@ -821,6 +1011,60 @@ function showSecondE3Sequence(){
   add(move.label, move.side, () => {
     secondE3Index++;
     showSecondE3Sequence();
+  });
+}
+
+function showSecondB3Choice(){
+  screen = "secondb3choice";
+  t.textContent = "相手の手";
+  b.innerHTML = "";
+  add("相手 A4", "black", () => {
+    secondE3Index = 6;
+    showSecondE3Sequence();
+  });
+  add("相手 C5", "black", startSecondB3C5Sequence);
+}
+
+const secondB3C5Sequence = [
+  { label: "相手 C5", side: "black" },
+  { label: "自分 D1", side: "white" },
+  { label: "相手 B1", side: "black" },
+  { label: "自分 D2（本来はB4、マコはこっち）", side: "white" },
+  { label: "相手 E4", side: "black" },
+  { label: "自分 B4（ダブコン）", side: "white" },
+  { label: "相手 B6", side: "black" },
+  { label: "自分 E5(ストナー)", side: "white" },
+  { label: "相手 B1", side: "black" },
+  { label: "自分 C6", side: "white" },
+  { label: "相手 B4", side: "black" },
+  { label: "自分 A6", side: "white" },
+  { label: "相手 F6", side: "black" },
+  { label: "自分 B3", side: "white" },
+  { label: "相手 E6", side: "black" },
+  { label: "自分 A5", side: "white" },
+  { label: "相手 B5", side: "black" }
+];
+let secondB3C5Index = 0;
+
+function startSecondB3C5Sequence(){
+  secondB3C5Index = 1;
+  showSecondB3C5Sequence();
+}
+
+function showSecondB3C5Sequence(){
+  screen = "secondb3c5sequence";
+  b.innerHTML = "";
+  if(secondB3C5Index >= secondB3C5Sequence.length){
+    screen = "secondb3c5done";
+    t.textContent = "手順終了";
+    b.innerHTML = '<p class="finish">相手 B5 まで完了</p>';
+    return;
+  }
+  const move = secondB3C5Sequence[secondB3C5Index];
+  t.textContent = "次の手";
+  add(move.label, move.side, () => {
+    secondB3C5Index++;
+    showSecondB3C5Sequence();
   });
 }
 
@@ -986,7 +1230,7 @@ function placeholder(text){
   b.innerHTML = "<p>この先の手順はあとで追加できます</p>";
 }
 
-function back(){
+function goBack(){
   if(screen === "home") return;
 
   if(screen === "first" || screen === "second"){
@@ -1018,6 +1262,28 @@ function back(){
   if(screen === "seconde3done"){
     secondE3Index = secondE3Sequence.length - 1;
     showSecondE3Sequence();
+    return;
+  }
+
+  if(screen === "secondb3choice"){
+    secondE3Index = 4;
+    showSecondE3Sequence();
+    return;
+  }
+
+  if(screen === "secondb3c5sequence"){
+    if(secondB3C5Index <= 1){
+      showSecondB3Choice();
+    }else{
+      secondB3C5Index--;
+      showSecondB3C5Sequence();
+    }
+    return;
+  }
+
+  if(screen === "secondb3c5done"){
+    secondB3C5Index = secondB3C5Sequence.length - 1;
+    showSecondB3C5Sequence();
     return;
   }
 
@@ -1097,6 +1363,15 @@ function back(){
   }
 
 
+  if(screen === "rabbitd2choice"){ startE3(); return; }
+  if(screen === "rabbitf5choice"){ e3D2RabbitIndex = 5; showE3D2RabbitSequence(); return; }
+  if(screen === "rabbitf5e2sequence"){ if(rabbitF5E2Index <= 1){ showRabbitF5Choice(); } else { rabbitF5E2Index--; showRabbitF5E2Sequence(); } return; }
+  if(screen === "rabbitf5e2done"){ rabbitF5E2Index = rabbitF5E2Sequence.length - 1; showRabbitF5E2Sequence(); return; }
+  if(screen === "rabbitd2c5choice"){ showRabbitD2Choice(); return; }
+  if(screen === "rabbitd2c5sequence"){ if(rabbitD2C5Index <= 2){ showRabbitD2C5Choice(); } else { rabbitD2C5Index--; showRabbitD2C5Sequence(); } return; }
+  if(screen === "rabbitd2c5done"){ rabbitD2C5Index = rabbitD2C5Sequence.length - 1; showRabbitD2C5Sequence(); return; }
+  if(screen === "rabbitd2c5b3sequence"){ if(rabbitD2C5B3Index <= 1){ showRabbitD2C5Choice(); } else { rabbitD2C5B3Index--; showRabbitD2C5B3Sequence(); } return; }
+  if(screen === "rabbitd2c5b3done"){ rabbitD2C5B3Index = rabbitD2C5B3Sequence.length - 1; showRabbitD2C5B3Sequence(); return; }
   if(screen === "rabbitc2choice"){ e3D2RabbitIndex = 6; showE3D2RabbitSequence(); return; }
   if(screen === "rabbitc2c5sequence"){ if(rabbitC2C5Index <= 1){ showRabbitC2Choice(); } else { rabbitC2C5Index--; showRabbitC2C5Sequence(); } return; }
   if(screen === "rabbitc2c5a1choice"){ rabbitC2C5Index = rabbitC2C5Sequence.length - 1; showRabbitC2C5Sequence(); return; }
@@ -1149,6 +1424,8 @@ function back(){
     showE3F2Sequence();
     return;
   }
+  if(screen === "b3b4sequence"){ if(b3B4Index <= 1){ showB3Choice(); } else { b3B4Index--; showB3B4Sequence(); } return; }
+  if(screen === "b3b4done"){ b3B4Index = b3B4Sequence.length - 1; showB3B4Sequence(); return; }
   if(screen === "b3a2sequence"){
     if(b3A2Index <= 1){
       showB3Choice();
